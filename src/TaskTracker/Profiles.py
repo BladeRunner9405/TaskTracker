@@ -26,6 +26,3 @@ class Day:
             raise NameError("The number must not be negative")
         else:
             self.freeTime = new_free_time
-
-
-

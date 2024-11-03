@@ -41,6 +41,7 @@ def create_task():
     else:
         TaskProcess(CURR_PROFILE).start_creating_process()
 
+
 def solve_bock_pack_task():
     BackPackSolutionProcess(CURR_PROFILE).start_process()
 

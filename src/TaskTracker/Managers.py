@@ -83,12 +83,13 @@ class TasksDatabaseManager:
 
     def update_task(self, profile, task_name, task_importance, task_time_cost, deadline):
         if self.database is not None:
-            self.database.update_data("Tasks", "Profile", profile, TASKS_HEADS, [task_importance, task_time_cost, deadline],
+            self.database.update_data("Tasks", "Profile", profile, TASKS_HEADS,
+                                      [task_importance, task_time_cost, deadline],
                                       "Task", task_name)
 
     def delete_task(self, profile, task_name):
         if self.database is not None:
-            self.database.delete_data("Tasks", "Profile", profile,"Task", task_name)
+            self.database.delete_data("Tasks", "Profile", profile, "Task", task_name)
 
     def check_if_task_exists(self, profile, task_name):
         if self.database.fetch_one("Tasks", f"Profile = \"{profile}\" AND Task = \"{task_name}\"") is not None:

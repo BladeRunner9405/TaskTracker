@@ -29,7 +29,7 @@ class BackPackSolution:
         for i in range(len(tasks)):
             items.append(Item(*tasks[i]))
 
-        capacity = time_remains # max weight we can put into the knapsack
+        capacity = time_remains  # max weight we can put into the knapsack
 
         @lru_cache(maxsize=None)  # cache all calls
         def best_value(n, w_limit):
@@ -56,7 +56,8 @@ class BackPackSolution:
     def solution(self, time_remains=None):
         if time_remains is None:
             time_remains = self.calculate_free_time(self.final_date)
-        result = sorted(self.solve_problem(self.tasks, time_remains), key=lambda x: x.utility_value / x.weight_value, reverse=True)
+        result = sorted(self.solve_problem(self.tasks, time_remains), key=lambda x: x.utility_value / x.weight_value,
+                        reverse=True)
         if len(result) == 0:
             return []
 
@@ -76,4 +77,3 @@ class BackPackSolution:
                 new_tasks.append(elem)
         self.tasks = new_tasks
         return can_be_done + self.solution(time_remains)
-

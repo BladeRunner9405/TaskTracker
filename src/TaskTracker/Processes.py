@@ -7,6 +7,7 @@ from prettytable import PrettyTable
 
 DAYS = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
 
+
 class CancelProcessException(Exception):
     def __init__(self, message):
         self.message = message
@@ -29,6 +30,7 @@ class Process:
         """
         pass
 
+
 def get_date(process):
     print("Введите дату:", end=" ")
 
@@ -39,29 +41,32 @@ def get_date(process):
 
     return date
 
+
 def is_valid_date(date_str):
-  """
-  Проверяет, является ли строка датой в формате DD.MM.YYYY.
+    """
+    Проверяет, является ли строка датой в формате DD.MM.YYYY.
 
-  Args:
-    date_str: Строка, которую нужно проверить.
+    Args:
+      date_str: Строка, которую нужно проверить.
 
-  Returns:
-    True, если строка является датой в формате DD.MM.YYYY, иначе False.
-  """
-  pattern = r"^\d{2}\.\d{2}\.\d{4}$"
-  if re.match(pattern, date_str):
-    day, month, year = map(int, date_str.split('.'))
-    # Дополнительная проверка:
-    if 1 <= month <= 12 and 1 <= day <= 31:
-      return True
-  return False
+    Returns:
+      True, если строка является датой в формате DD.MM.YYYY, иначе False.
+    """
+    pattern = r"^\d{2}\.\d{2}\.\d{4}$"
+    if re.match(pattern, date_str):
+        day, month, year = map(int, date_str.split('.'))
+        # Дополнительная проверка:
+        if 1 <= month <= 12 and 1 <= day <= 31:
+            return True
+    return False
+
 
 def _get_message(process, not_none=False, only_int=False):
     """
     Метод, специально созданный для того, чтобы в любой момент можно было отменить любой процесс
     :return:
     """
+
     def repeat():
         print("Пожалуйста, попробуйте ещё раз:", end=" ")
         return _get_message(process, not_none, only_int)
@@ -87,6 +92,7 @@ def _get_message(process, not_none=False, only_int=False):
             return repeat()
     return message
 
+
 def get_non_digit_name(process):
     name = _get_message(process, True)
     if name.isdigit():
@@ -94,6 +100,7 @@ def get_non_digit_name(process):
         return get_non_digit_name(process)
 
     return name
+
 
 def choose_variant(process, variants):
     for i in range(len(variants)):
@@ -109,6 +116,7 @@ def choose_variant(process, variants):
     print("Такого варианта нет в списке. Пожалуйста, выберете вариант из списка")
     return choose_variant(process, variants)
 
+
 def print_table(head, body):
     table = PrettyTable(head)
     td_data = body[:]
@@ -118,9 +126,11 @@ def print_table(head, body):
 
     print(table)
 
+
 def press_anything_to_continue(process):
     print("Введите что-нибудь для продолжения:", end=" ")
     _get_message(process)
+
 
 class UserProfileProcess(Process):
     """
@@ -229,15 +239,16 @@ class ChooseProfileProcess(Process):
         super().cancel_process()
         print("Процесс выбора профиля был отменён")
 
+
 class TaskProcess(Process):
     """
     Класс, для создания новых задач
     """
+
     def __init__(self, curr_profile, task_name=None):
         self.task_name = task_name
         self.curr_profile = curr_profile
         self.database_manager = TasksDatabaseManager("my_database.db")
-
 
     def start_creating_process(self):
         """
@@ -252,7 +263,6 @@ class TaskProcess(Process):
             self.task_name = get_non_digit_name(self)
 
         self.start_detailing_process(False)
-
 
     def start_detailing_process(self, edit=True):
         """
@@ -276,17 +286,17 @@ class TaskProcess(Process):
         print("Введите дедлайн этого задания в формате DD.MM.YYYY")
         deadline = get_date(self)
 
-
         task_time_cost = hours * 60 + minutes
 
         if not edit:
-            self.database_manager.save_task(self.curr_profile, self.task_name, task_importance, task_time_cost, deadline)
+            self.database_manager.save_task(self.curr_profile, self.task_name, task_importance, task_time_cost,
+                                            deadline)
         else:
-            self.database_manager.update_task(self.curr_profile, self.task_name, task_importance, task_time_cost, deadline)
+            self.database_manager.update_task(self.curr_profile, self.task_name, task_importance, task_time_cost,
+                                              deadline)
         self.database_manager.close()
         print(f"Ваша задача {self.task_name} успешно сохранена")
         press_anything_to_continue(self)
-
 
     def start_edit_process(self, stop=True):
         self.show_tasks(False)
@@ -308,7 +318,6 @@ class TaskProcess(Process):
         print(f"Задача {task} была успешно удалена")
         press_anything_to_continue(self)
 
-
     def show_tasks(self, stop=True):
         database_manager = TasksDatabaseManager("my_database.db")
         tasks = database_manager.get_all_tasks(self.curr_profile)
@@ -317,14 +326,12 @@ class TaskProcess(Process):
         for i in range(len(tasks)):
             tasks[i] = [tasks[i][0], tasks[i][1], f"{tasks[i][2] // 60} часов {tasks[i][2] % 60} минут", tasks[i][3]]
 
-
         if len(tasks) > 0:
             print_table("Название задачи, Важность задачи, Трудозатратность задачи, Дедлайн".split(', '), tasks)
         else:
             print("У этого профиля пока что нет задач")
         if stop:
             press_anything_to_continue(self)
-
 
 
 class MainMenuProcess(Process):
@@ -337,7 +344,7 @@ class MainMenuProcess(Process):
         print("Главное меню. Для отмены любого действия введите слово \"Отмена\"")
         curr_variants = self.variants
         if self.curr_profile is not None:
-           curr_variants.extend(self.variants_for_authorized)
+            curr_variants.extend(self.variants_for_authorized)
         res = choose_variant(self, curr_variants)
         return res
 
@@ -397,10 +404,13 @@ class BackPackSolutionProcess(Process):
                 for i in range(1, len(info)):
                     free_time_schedule[i - 1] = info[i]
 
-                result = sorted(BackPackSolution(tasks, free_time_schedule, deadline).solution(), key=lambda x: datetime.strptime(x.deadline, '%d.%m.%Y').date())
+                result = sorted(BackPackSolution(tasks, free_time_schedule, deadline).solution(),
+                                key=lambda x: datetime.strptime(x.deadline, '%d.%m.%Y').date())
                 data = []
                 for i in range(len(result)):
-                    data.append([result[i].Task_name, result[i].utility_value, f"{result[i].weight_value // 60} часов {result[i].weight_value % 60} минут", result[i].deadline])
+                    data.append([result[i].Task_name, result[i].utility_value,
+                                 f"{result[i].weight_value // 60} часов {result[i].weight_value % 60} минут",
+                                 result[i].deadline])
 
                 print("Согласно вашему расписанию, вы можете успеть сделать следующие наиболее важные задачи:")
                 print_table(["Задача", "Важность", "Время выполнения", "Дедлайн"], data)

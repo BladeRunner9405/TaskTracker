@@ -69,3 +69,39 @@
   * **get_schedule** (возвращает список задач на день, отсортированный по приоритету)
 
 **main.py** будет отвечать за взаимодействие с пользователем, используя input и print, вызывая соответствующие методы класса TaskTracker.
+
+
+## Запуск приложения
+
+Сначала, создайте виртуальное окружение
+```console
+python -m venv my_project_env
+```
+
+Активируйте виртуальное окружение:
+
+Windows:
+```console
+my_project_env\Scripts\activate
+```
+Linux/macOS:
+```console
+source my_project_env/bin/activate
+```
+
+Установите необходимые зависимости для вашего проекта с помощью pip:
+```console
+pip install -r requirements.txt
+```
+
+Чтобы создать исполняемый файл, установите библиотеку PyInstaller. Установите ее с помощью pip:
+```console
+pip install pyinstaller
+```
+
+Затем выполните следующую команду:
+```console
+pyinstaller --onefile main.py
+```
+
+После выполнения этой команды, в папке dist появится исполняемый файл этого проекта.

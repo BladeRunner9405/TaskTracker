@@ -32,6 +32,11 @@ class Process:
 
 
 def get_date(process):
+    """
+    Метод, который получает у пользователя дату в формате DD.MM.YYYY
+    :param process:
+    :return date:
+    """
     print("Введите дату:", end=" ")
 
     date = _get_message(process, True)
@@ -45,12 +50,8 @@ def get_date(process):
 def is_valid_date(date_str):
     """
     Проверяет, является ли строка датой в формате DD.MM.YYYY.
-
-    Args:
-      date_str: Строка, которую нужно проверить.
-
-    Returns:
-      True, если строка является датой в формате DD.MM.YYYY, иначе False.
+    :param date_str: Строка, которую нужно проверить.:
+    :return True, если строка является датой в формате DD.MM.YYYY, иначе False.:
     """
     pattern = r"^\d{2}\.\d{2}\.\d{4}$"
     if re.match(pattern, date_str):
@@ -63,11 +64,18 @@ def is_valid_date(date_str):
 
 def _get_message(process, not_none=False, only_int=False):
     """
-    Метод, специально созданный для того, чтобы в любой момент можно было отменить любой процесс
-    :return:
+    Метод, получающий пользовательский ввод, специально созданный для того, чтобы в любой момент можно было отменить любой процесс
+    :param process:
+    :param not_none:
+    :param only_int:
+    :return message:
     """
 
     def repeat():
+        """
+        Метод, который получает снова ввод пользователя
+        :return message:
+        """
         print("Пожалуйста, попробуйте ещё раз:", end=" ")
         return _get_message(process, not_none, only_int)
 
@@ -94,6 +102,11 @@ def _get_message(process, not_none=False, only_int=False):
 
 
 def get_non_digit_name(process):
+    """
+    Метод, получающий от пользователя ввод, состоящий не только из чисел
+    :param process:
+    :return name - ввод пользователя, состоящий не только из чисел:
+    """
     name = _get_message(process, True)
     if name.isdigit():
         print("Ввод не может состоять только из цифр. Пожалуйста, попробуйте другой вариант:", end=" ")
@@ -103,6 +116,12 @@ def get_non_digit_name(process):
 
 
 def choose_variant(process, variants):
+    """
+    Метод, который предоставляет пользователю выбор из нескольких вариантов (variants), и получающий от него ответ
+    :param process:
+    :param variants:
+    :return выбранный вариант:
+    """
     for i in range(len(variants)):
         print(f"\t{i + 1}: {variants[i]}")
     print("Ваш выбор:", end=" ")
@@ -118,6 +137,12 @@ def choose_variant(process, variants):
 
 
 def print_table(head, body):
+    """
+    Метод, который выводит таблицу
+    :param head:
+    :param body:
+    :return:
+    """
     table = PrettyTable(head)
     td_data = body[:]
 
@@ -128,6 +153,11 @@ def print_table(head, body):
 
 
 def press_anything_to_continue(process):
+    """
+    Метод, который получает от пользователя какой-то ввод. Нужен для того, чтобы пользователь посмотрел на результат, а затем программа продолжила работу
+    :param process:
+    :return:
+    """
     print("Введите что-нибудь для продолжения:", end=" ")
     _get_message(process)
 
@@ -143,9 +173,9 @@ class UserProfileProcess(Process):
 
     def get_day(self, i):
         """
-        Метод, считывающий и обрабатывающий пользовательский ввод на i-ый день недели
+        Метод, считывающий и обрабатывающий пользовательский ввод на (i+1)-ый день недели
         :param i:
-        :return:
+        :return время пользователя в (i+1)-ый день недели:
         """
 
         print(f"\t{DAYS[i]}:")
@@ -162,8 +192,8 @@ class UserProfileProcess(Process):
 
     def get_week_time(self):
         """
-        Метод, считывающий, обрабатывающий и кодирующий общее свободное время пользователя
-        :return:
+        Метод, считывающий и обрабатывающий свободное время пользователя в неделю
+        :return week_time:
         """
         print(
             "Пожалуйста, введите сколько своего времени вы хотите тратить на выполнение своих задач в каждом из следующих дней:")
@@ -178,7 +208,7 @@ class UserProfileProcess(Process):
     def start_creating_process(self):
         """
         Процесс создания профиля
-        :return:
+        :return profile - название созданного профиля:
         """
         super().start_process()
         print(
@@ -194,8 +224,9 @@ class UserProfileProcess(Process):
 
     def start_editing_process(self, edit=True):
         """
-        Процесс изменения профиля
-        :return:
+        Процесс изменения профиля.
+        Если стоит флаг edit - то значит профиль уже создан, и он сейчас изменяется. Иначе идёт создание нового профиля.
+        :return profile - название изменённого профиля:
         """
 
         week_times = self.get_week_time()
@@ -209,6 +240,10 @@ class UserProfileProcess(Process):
         return self.profile
 
     def cancel_process(self):
+        """
+        Метод, отменяющий процесс
+        :return:
+        """
         super().cancel_process()
         print("Процесс создания профиля был отменён")
         self.database_manager.close()
@@ -218,7 +253,7 @@ class ChooseProfileProcess(Process):
     def start_process(self):
         """
         Процесс выбора профиля пользователя
-        :return:
+        :return profile - выбранный профиль или None:
         """
         super().start_process()
 
@@ -236,6 +271,10 @@ class ChooseProfileProcess(Process):
             press_anything_to_continue(self)
 
     def cancel_process(self):
+        """
+        Метод, отменяющий процесс
+        :return:
+        """
         super().cancel_process()
         print("Процесс выбора профиля был отменён")
 
@@ -298,7 +337,12 @@ class TaskProcess(Process):
         print(f"Ваша задача {self.task_name} успешно сохранена")
         press_anything_to_continue(self)
 
-    def start_edit_process(self, stop=True):
+    def start_edit_process(self):
+        """
+        Метод, запускающий процесс добавления в профиль информации.
+        :param stop:
+        :return:
+        """
         self.show_tasks(False)
         print("Пожалуйста, выберете задачу, которую вы хотите отредактировать:")
         database_manager = TasksDatabaseManager("my_database.db")
@@ -308,6 +352,10 @@ class TaskProcess(Process):
         self.start_detailing_process(True)
 
     def start_deleting_task_process(self):
+        """
+        Метод, запускающий процесс выбора и удаления задачи
+        :return:
+        """
         self.show_tasks(False)
         print("Пожалуйста, выберете задачу, которую вы хотите удалить:")
         database_manager = TasksDatabaseManager("my_database.db")
@@ -319,6 +367,11 @@ class TaskProcess(Process):
         press_anything_to_continue(self)
 
     def show_tasks(self, stop=True):
+        """
+        Метод, который выводит все задачи пользователя curr_profile
+        :param stop:
+        :return:
+        """
         database_manager = TasksDatabaseManager("my_database.db")
         tasks = database_manager.get_all_tasks(self.curr_profile)
         database_manager.close()
@@ -335,12 +388,19 @@ class TaskProcess(Process):
 
 
 class MainMenuProcess(Process):
+    """
+    Класс для главного меню
+    """
     def __init__(self, curr_profile, variants, variants_for_authorized):
         self.curr_profile = curr_profile
         self.variants = variants
         self.variants_for_authorized = variants_for_authorized
 
     def start_process(self):
+        """
+        Метод, который предоставляет пользователю варианты доступных в приложении функций
+        :return res - выбор варианта пользователем:
+        """
         print("Главное меню. Для отмены любого действия введите слово \"Отмена\"")
         curr_variants = self.variants
         if self.curr_profile is not None:
@@ -350,10 +410,17 @@ class MainMenuProcess(Process):
 
 
 class GetCurrProfileProcess(Process):
+    """
+    Класс, отвечающий за показ текущего профиля пользователя
+    """
     def __init__(self, curr_profile):
         self.curr_profile = curr_profile
 
     def start_process(self):
+        """
+        Метод, показывающий информацию о текущем выбранном профиле
+        :return:
+        """
         if not self.curr_profile:
             print("Пока что вы не выбрали профиль. Чтобы выбрать профиль, введите \"Выбрать профиль\"")
         else:
@@ -367,27 +434,41 @@ class GetCurrProfileProcess(Process):
 
 
 def filter_tasks(tasks, cutoff_date):
+    """
+    Метод, который из задач tasks оставляет только те, у которых дедлайн раньше, чем cutoff_date
+    :param tasks:
+    :param cutoff_date:
+    :return filtered_data, max_date - самый поздний дедлайн:
+    """
     filtered_data = []
     cutoff_datetime = datetime.strptime(cutoff_date, '%d.%m.%Y').date()
-    min_date = None
+    max_date = None
     for row in tasks:
         date_str = row[3]
         date = datetime.strptime(date_str, '%d.%m.%Y').date()
         if date < cutoff_datetime:
             filtered_data.append(row)
-            if min_date is None or date > min_date:
-                min_date = date
+            if max_date is None or date > max_date:
+                max_date = date
 
-    return filtered_data, min_date
+    return filtered_data, max_date
 
 
 class BackPackSolutionProcess(Process):
+    """
+    Класс, для запуска решения задачи о рюкзаке
+    """
     def __init__(self, curr_profile):
         self.curr_profile = curr_profile
         self.task_db_manager = TasksDatabaseManager("my_database.db")
         self.user_db_manager = UserDatabaseManager("my_database.db")
 
     def start_process(self):
+        """
+        Метод, считывающий у пользователя дату, до которой он хочет успеть решить как можно больше полезных задач, и запускающий
+        процесс решения задачи о рюкзаке. Затем он выводит результат
+        :return:
+        """
         tasks = self.task_db_manager.get_all_tasks(self.curr_profile)
         if len(tasks) == 0:
             print("У вас сейчас нет задач")

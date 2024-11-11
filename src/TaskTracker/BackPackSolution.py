@@ -4,12 +4,21 @@ from functools import lru_cache
 
 
 class BackPackSolution:
+    """
+    Класс, который решает задачу о рюкзаке
+    """
+
     def __init__(self, tasks, free_time_schedule, final_date):
         self.tasks = tasks
         self.free_time_schedule = free_time_schedule
         self.final_date = final_date
 
     def calculate_free_time(self, end_date):
+        """
+        Вычисляет количество доступного времени у пользователя между сегодняшним днём и датой end_date
+        :param end_date:
+        :return total_free_time:
+        """
         start_date = datetime.today().date()
 
         total_free_time = 0
@@ -24,6 +33,12 @@ class BackPackSolution:
         return total_free_time
 
     def solve_problem(self, tasks, time_remains):
+        """
+        Метод, решающий задачу о рюкзаке для задач tasks и доступным временем time_remains
+        :param tasks:
+        :param time_remains:
+        :return result - решение задачи о рюкзаке, оптимальный выбор:
+        """
         Item = namedtuple('Item', 'Task_name utility_value weight_value deadline')
         items = []
         for i in range(len(tasks)):
@@ -33,6 +48,12 @@ class BackPackSolution:
 
         @lru_cache(maxsize=None)  # cache all calls
         def best_value(n, w_limit):
+            """
+            Метод, который позволяет решать задачу о рюкзаке с помощью динамического программирования. Выбирает, добавлять ли n-ый элемент в рюкзак, или нет
+            :param n:
+            :param w_limit:
+            :return max value для n элементов с w_limit:
+            """
             if n == 0:  # no items
                 return 0  # zero value
             elif items[n - 1].weight_value > w_limit:
@@ -54,6 +75,15 @@ class BackPackSolution:
         return result
 
     def solution(self, time_remains=None):
+        """
+        Метод, который запускает решение задачи о рюкзаке. Так как метод solve_problem не гарантирует, что ответ будет
+        корректный (так как в него на вход поступают задачи, дедлайн которых раньше, чем final_date). Метод обрабатывает результат solve_problem,
+        и удаляет те задачи, которые были выбраны, но которые никак не получается решить. Метод оставляет выбранные задачи, которые можно решить,
+        и запускает снова solve_problem. Аналогично обрабатывает результат. Процесс повторяется до тех пор,
+        пока solve_problem хотя-бы что-то возвращает.
+        :param time_remains:
+        :return can_be_done - оптимальный выбор задач:
+        """
         if time_remains is None:
             time_remains = self.calculate_free_time(self.final_date)
         result = sorted(self.solve_problem(self.tasks, time_remains), key=lambda x: x.utility_value / x.weight_value,
